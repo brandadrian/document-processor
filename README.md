@@ -5,19 +5,16 @@ DocumentProcessor is a command line utility built with .NET 8 for document proce
 ## Features
 - Analyze a pdf wether it is an invoice, correspondence or other document type.
 
+## Prerequisites
+- [Docker Desktop](https://www.docker.com/products/docker-desktop) up and running
+- Running Ollama with mistral model
+  ```sh
+  cd ollama
+  docker-compose up
+  docker exec -it ollama ollama pull mistral
+  ```
 
 ## Usage
-
-Start ollama
-```sh
-cd ollama
-docker-compose up
-```
-
-Pull mistral image
-```sh
-docker exec -it ollama ollama pull mistral
-```
 
 Run the CLI
 

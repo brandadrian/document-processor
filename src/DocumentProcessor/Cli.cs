@@ -1,4 +1,5 @@
-﻿using McMaster.Extensions.CommandLineUtils;
+﻿using System.Collections.Generic;
+using McMaster.Extensions.CommandLineUtils;
 
 namespace DocumentProcessor;
 

@@ -1,4 +1,6 @@
-﻿using McMaster.Extensions.CommandLineUtils;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using McMaster.Extensions.CommandLineUtils;
 
 namespace DocumentProcessor.ClassifyPdfCommand;
 

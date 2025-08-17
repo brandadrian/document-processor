@@ -1,4 +1,6 @@
-﻿using DocumentProcessor;
+﻿using System;
+using System.Threading;
+using DocumentProcessor;
 using DocumentProcessor.ClassifyPdfCommand;
 using Microsoft.Extensions.DependencyInjection;
  
