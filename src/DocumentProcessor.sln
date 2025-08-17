@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocumentProcessor", "DocumentProcessor\DocumentProcessor.csproj", "{777BA977-B75F-42B6-A8A6-8A3B661D91BF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{777BA977-B75F-42B6-A8A6-8A3B661D91BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{777BA977-B75F-42B6-A8A6-8A3B661D91BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{777BA977-B75F-42B6-A8A6-8A3B661D91BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{777BA977-B75F-42B6-A8A6-8A3B661D91BF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
