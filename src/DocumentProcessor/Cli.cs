@@ -1,17 +1,33 @@
 ﻿using System.Collections.Generic;
-using McMaster.Extensions.CommandLineUtils;
+using System.CommandLine;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace DocumentProcessor;
 
-public class Cli : CommandLineApplication
+public class Cli
 {
-    public Cli(IEnumerable<CommandLineApplication> commands)
+    private readonly RootCommand _rootCommand;
+
+    public Cli(IEnumerable<Command> commands)
     {
-        HelpOption("-? | -h | --help", true);
+        _rootCommand = new RootCommand("DocumentProcessor is a command line tool for document processing.");
 
         foreach (var cmd in commands)
         {
-            AddSubcommand(cmd);
+            _rootCommand.Add(cmd);
         }
+    }
+
+    public string? Description
+    {
+        get => _rootCommand.Description;
+        set => _rootCommand.Description = value;
+    }
+
+    public async Task<int> ExecuteAsync(string[] args, CancellationToken cancellationToken = default)
+    {
+        var parseResult = _rootCommand.Parse(args);
+        return await parseResult.InvokeAsync(cancellationToken: cancellationToken);
     }
 }

@@ -1,6 +1,6 @@
 ﻿# DocumentProcessor
 
-DocumentProcessor is a command line utility built with .NET 8 for document processing.
+DocumentProcessor is a command line utility built with .NET for document processing.
 
 ## Features
 - Analyze a pdf wether it is an invoice, correspondence or other document type.
@@ -19,5 +19,10 @@ DocumentProcessor is a command line utility built with .NET 8 for document proce
 Run the CLI
 
 ```sh
-dotnet run --project DocumentProcessor -- classify-pdf C:\files\correspondence.pdf
+dotnet run --project DocumentProcessor -- classify-pdf ../files/correspondence.pdf
+```
+
+### Help
+```
+dotnet run --project DocumentProcessor -- -help                                   
 ```

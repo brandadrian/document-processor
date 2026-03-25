@@ -1,33 +1,26 @@
-﻿using System.Threading;
+﻿using System.CommandLine;
+using System.Threading;
 using System.Threading.Tasks;
-using McMaster.Extensions.CommandLineUtils;
 
 namespace DocumentProcessor.ClassifyPdfCommand;
 
-public class ClassifyPdfCommand : CommandLineApplication
+public class ClassifyPdfCommand : Command
 {
-    private readonly CommandArgument<string> _pdfPath;
-
-    public ClassifyPdfCommand()
+    public ClassifyPdfCommand() : base("classify-pdf", "Classifies a pdf document whether it is an invoice, correspondence or others")
     {
-        Name = "classify-pdf";
-        Description = "Classifies a pdf document wether it is an invoice, correspondence or others";
+        var pdfPathArgument = new Argument<string>("pdfPath")
+        {
+            Description = "Path to pdf to classify"
+        };
 
-        _pdfPath = Argument<string>(
-            "pdfPath",
-            "Path to pdf to classify",
-            cfg => cfg.IsRequired(),
-            true
-        );
+        Add(pdfPathArgument);
 
-        OnExecuteAsync(ExecuteAsync);
-    }
-
-    private async Task<int> ExecuteAsync(CancellationToken cancellationToken)
-    {
-        ClassifyPdfCommandProcessor processor = new(_pdfPath.Value!);
-        return await processor.Execute(cancellationToken)
-            ? 0
-            : 1;
+        SetAction(async (parseResult, cancellationToken) =>
+        {
+            var pdfPath = parseResult.GetValue(pdfPathArgument);
+            var processor = new ClassifyPdfCommandProcessor(pdfPath!);
+            var success = await processor.Execute(cancellationToken);
+            return success ? 0 : 1;
+        });
     }
 }
