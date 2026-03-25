@@ -1,4 +1,4 @@
-﻿using McMaster.Extensions.CommandLineUtils;
+﻿using System.CommandLine;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DocumentProcessor;
@@ -6,8 +6,8 @@ namespace DocumentProcessor;
 public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddCliCommand<T>(this IServiceCollection services)
-        where T : CommandLineApplication
+        where T : Command
     {
-        return services.AddSingleton<CommandLineApplication, T>();
+        return services.AddSingleton<Command, T>();
     }
 }

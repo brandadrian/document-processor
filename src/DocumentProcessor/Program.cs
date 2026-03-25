@@ -10,7 +10,6 @@ var services = new ServiceCollection()
 
 var provider = services.BuildServiceProvider();
 var cli = provider.GetRequiredService<Cli>();
-cli.Name = "DocumentProcessor";
 cli.Description = "DocumentProcessor is a command line tool for document processing.";
 
 using var cts = new CancellationTokenSource();
