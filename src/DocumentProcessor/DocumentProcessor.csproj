@@ -16,7 +16,39 @@
 
     <ItemGroup>
         <PackageReference Include="System.CommandLine" Version="2.0.2" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.2" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.2" />
+        <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.2" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="10.0.2" />
         <PackageReference Include="PdfPig" Version="0.1.11" />
+    </ItemGroup>
+
+    <ItemGroup>
+            <EmbeddedResource Include="../../files/extraction/training/**/*.*">
+                <LogicalName>ExtractionSamples/%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+            </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="appsettings.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </Content>
+        <Content Include="../../files/classification/prompts/**/*.txt">
+            <Link>prompts\%(RecursiveDir)%(Filename)%(Extension)</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+        </Content>
+      <Content Include="../../files/extraction/prompts/**/*.txt">
+        <Link>prompts\%(RecursiveDir)%(Filename)%(Extension)</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Classification\Commands\" />
+      <Folder Include="Extraction\Commands\" />
+      <Folder Include="Shared\Models\" />
     </ItemGroup>
 </Project>

@@ -1,0 +1,14 @@
+[
+  {
+    "CategoryName": "invoiceNumber",
+    "Text": "F1000876/23"
+  },
+  {
+    "CategoryName": "invoiceDate",
+    "Text": "2023-08-14"
+  },
+  {
+    "CategoryName": "totalAmount",
+    "Text": "702,00"
+  }
+]

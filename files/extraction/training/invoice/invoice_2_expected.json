@@ -1,0 +1,14 @@
+[
+  {
+    "CategoryName": "invoiceNumber",
+    "Text": "2025-001"
+  },
+  {
+    "CategoryName": "invoiceDate",
+    "Text": "2025-08-17"
+  },
+  {
+    "CategoryName": "totalAmount",
+    "Text": "315,35"
+  }
+]
