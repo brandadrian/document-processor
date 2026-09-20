@@ -110,8 +110,8 @@ Extract data from a PDF:
 
 ```sh
 dotnet run --project src/DocumentProcessor -- extract-pdf-data \
-	files/extraction/training/invoice/invoice_3.pdf \
-	--type invoice
+	files/extraction/tests/invoice_example/invoice_3.pdf \
+	--type invoice_example
 ```
 
 By default, extraction results are written to:

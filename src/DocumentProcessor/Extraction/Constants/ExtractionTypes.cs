@@ -5,8 +5,10 @@ namespace DocumentProcessor.Extraction.Constants;
 internal static class ExtractionTypes
 {
     public const string Default = "lehrvertrag";
+    public const string Invoice = "invoice";
+    public const string InvoiceExample = "invoice_example";
 
-    public static readonly string[] Available = ["invoice", Default];
+    public static readonly string[] Available = [Invoice, InvoiceExample, Default];
 
     public static Option<string> CreateOption()
     {

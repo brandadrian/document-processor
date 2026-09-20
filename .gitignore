@@ -44,7 +44,10 @@ CodeCoverage/
 # Generated document processing results
 files/classification/results/
 files/extraction/results/
-files/**/lehrvertragv2*
+files/**/tests/invoice/**
+files/**/tests/lehrvertrag/**
+files/**/training/invoice/**
+files/**/training/lehrvertrag/**
 
 # MSBuild Binary and Structured Log
 *.binlog
