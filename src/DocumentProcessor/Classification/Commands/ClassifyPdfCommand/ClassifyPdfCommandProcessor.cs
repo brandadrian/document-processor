@@ -31,7 +31,12 @@ public class ClassifyPdfCommandProcessor(
             
             var result = await classificationService.ClassifyDocument(text, settings.Model, settings.LlmUrl, cancellationToken);
             stopwatch.Stop();
-            var classificationResult = new ProcessingResult<DocumentClassification>(DateTimeOffset.Now, result, text);
+            var classificationResult = new ProcessingResult<DocumentClassification>(
+                DateTimeOffset.Now,
+                settings.Model,
+                stopwatch.ElapsedMilliseconds,
+                result,
+                text);
             var resolvedOutputPath = outputPathResolver.Resolve(
                 pdfPath,
                 outputPath,

@@ -34,7 +34,12 @@ public class PdfDataExtractionCommandProcessor(
             var text = textReaderService.ReadText(pdfPath, logger, cancellationToken);
             var fields = await extractionService.ExtractData(text, examples, categories, type, settings.Model, settings.LlmUrl, cancellationToken);
             stopwatch.Stop();
-            var result = new ProcessingResult<ExtractedField[]>(DateTimeOffset.Now, fields, text);
+            var result = new ProcessingResult<ExtractedField[]>(
+                DateTimeOffset.Now,
+                settings.Model,
+                stopwatch.ElapsedMilliseconds,
+                fields,
+                text);
             var json = JsonSerializer.Serialize(result, OutputOptions);
             var resolvedOutputPath = outputPathResolver.Resolve(
                 pdfPath,

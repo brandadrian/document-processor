@@ -9,6 +9,7 @@ DocumentProcessor is a command line utility built with .NET for document process
   - [Ollama Setup](#ollama-setup)
   - [Alternative: Ollama Setup via Docker](#alternative-ollama-setup-via-docker)
 - [Usage](#usage)
+  - [Ollama Test](#ollama-test)
   - [PDF Classification](#pdf-classification)
   - [PDF Data Extraction](#pdf-data-extraction)
 - [Extraction Flow](#extraction-flow)
@@ -59,6 +60,20 @@ docker exec -it ollama ollama pull gemma4:31b
 
 From the repository root, with Ollama running and the selected model pulled.
 
+### Ollama Test
+
+Send a simple prompt to confirm the configured Ollama endpoint and model are reachable:
+
+```sh
+dotnet run --project src/DocumentProcessor -- test-ollama
+```
+
+Optionally override the prompt:
+
+```sh
+dotnet run --project src/DocumentProcessor -- test-ollama --prompt "Reply with READY."
+```
+
 ### PDF Classification
 
 Classify a PDF:
@@ -78,6 +93,8 @@ Classification results are written as a JSON object containing:
 ```json
 {
   "Date": "2026-09-20T16:37:48.724+02:00",
+  "Model": "qwen:4b",
+  "ProcessingTimeMs": 1234,
   "Data": {
     "DocumentType": "INVOICE",
     "Confidence": 0.95,
@@ -136,6 +153,8 @@ Extraction results are written as a JSON object containing:
 ```json
 {
   "Date": "2026-09-20T16:36:46.546+02:00",
+  "Model": "qwen:4b",
+  "ProcessingTimeMs": 2345,
   "Data": [
     {
       "FieldName": "invoiceNumber",

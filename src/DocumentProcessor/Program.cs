@@ -3,6 +3,7 @@ using DocumentProcessor.Classification;
 using DocumentProcessor.Classification.Options;
 using DocumentProcessor.Extraction;
 using DocumentProcessor.Extraction.Options;
+using DocumentProcessor.Shared;
 using DocumentProcessor.Shared.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -44,6 +45,7 @@ var services = new ServiceCollection()
     })
     .AddClassification()
     .AddExtraction()
+    .AddShared()
     .AddTransient<TextReaderService>()
     .AddTransient<OutputPathResolver>()
     .AddSingleton<Cli>();
