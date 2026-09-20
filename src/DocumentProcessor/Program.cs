@@ -45,6 +45,7 @@ var services = new ServiceCollection()
     .AddClassification()
     .AddExtraction()
     .AddTransient<TextReaderService>()
+    .AddTransient<OutputPathResolver>()
     .AddSingleton<Cli>();
 
 var provider = services.BuildServiceProvider();

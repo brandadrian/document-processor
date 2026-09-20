@@ -5,7 +5,7 @@ namespace DocumentProcessor.Extraction.Commands.PdfDataExtractionCommand;
 
 public class PdfDataExtractionCommand : Command
 {
-    public PdfDataExtractionCommand(PdfDataExtractionCommandProcessor processor) : base("extract-pdf-data", "Extracts document data as CategoryName/Text JSON")
+    public PdfDataExtractionCommand(PdfDataExtractionCommandProcessor processor) : base("extract-pdf-data", "Extracts document data as FieldName/Text JSON")
     {
         Aliases.Add("pdf-data-extraction");
 
@@ -15,7 +15,7 @@ public class PdfDataExtractionCommand : Command
         };
         var outputOption = new Option<string?>("--output", "-o")
         {
-            Description = "Output JSON file (defaults to results/<pdf-filename>_<timestamp>.json)"
+            Description = "Output JSON file (defaults to files/extraction/results/<type>/<pdf-filename>_<timestamp>.json)"
         };
         var typeOption = ExtractionTypes.CreateOption();
 

@@ -13,7 +13,7 @@ public static class ExtractionPromptBuilder
             examples.Select(example => new
             {
                 text = example.Text,
-                extraction = example.Fields.ToDictionary(field => field.CategoryName, field => field.Text, StringComparer.Ordinal)
+                extraction = example.Fields.ToDictionary(field => field.FieldName, field => field.Text, StringComparer.Ordinal)
             }),
             PromptJsonOptions);
 

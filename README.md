@@ -2,9 +2,35 @@
 
 DocumentProcessor is a command line utility built with .NET for document processing.
 
+## Table of Contents
+- [System Context](#system-context)
+- [Features](#features)
+- [Prerequisites](#prerequisites)
+  - [Ollama Setup](#ollama-setup)
+  - [Alternative: Ollama Setup via Docker](#alternative-ollama-setup-via-docker)
+- [Usage](#usage)
+  - [PDF Classification](#pdf-classification)
+  - [PDF Data Extraction](#pdf-data-extraction)
+- [Extraction Flow](#extraction-flow)
+
 ## Features
 - Analyze a pdf wether it is an invoice, correspondence or other document type.
-- Extract document data as a JSON array of `CategoryName`/`Text` pairs, matching the selected extraction type.
+- Extract document data as a JSON array of `FieldName`/`Text` pairs, matching the selected extraction type.
+
+## System Context
+
+```mermaid
+flowchart LR
+    user["User"]
+    app["DocumentProcessor CLI"]
+    files["Local files\nPDFs, prompts, examples, results"]
+    ollama["Local Ollama\nLLM"]
+
+    user -->|"runs commands"| app
+    app -->|"reads / writes"| files
+    app -->|"asks for classification or extraction"| ollama
+    ollama -->|"returns JSON"| app
+```
 
 ## Prerequisites
 - [Docker Desktop](https://www.docker.com/products/docker-desktop) up and running
@@ -41,6 +67,26 @@ Classify a PDF:
 dotnet run --project src/DocumentProcessor -- classify-pdf files/classification/tests/invoice_3.pdf
 ```
 
+By default, classification results are written to:
+
+```text
+files/classification/results/<document-type>/<pdf-filename>_<timestamp>.json
+```
+
+Classification results are written as a JSON object containing:
+
+```json
+{
+  "Date": "2026-09-20T16:37:48.724+02:00",
+  "Data": {
+    "DocumentType": "INVOICE",
+    "Confidence": 0.95,
+    "Reasoning": "The document contains invoice number, line items and a total amount."
+  },
+  "RawOcr": "Raw text extracted from the PDF"
+}
+```
+
 ### PDF Data Extraction
 
 Extract data from a PDF:
@@ -51,13 +97,19 @@ dotnet run --project src/DocumentProcessor -- extract-pdf-data \
 	--type invoice
 ```
 
-# Extraction Flow
+By default, extraction results are written to:
+
+```text
+files/extraction/results/<type>/<pdf-filename>_<timestamp>.json
+```
+
+## Extraction Flow
 
 ```mermaid
 sequenceDiagram
     actor User
     participant CLI as extract-pdf-data
-    participant Text as PdfPig text reader
+    participant Text as PdfPig OCR
     participant Training as Training resources
     participant Prompt as Type prompt
     participant Ollama
@@ -70,7 +122,7 @@ sequenceDiagram
     Prompt-->>CLI: System prompt
     CLI->>Text: Extract text from input PDF
     Text-->>CLI: PDF text
-    CLI->>CLI: Build category schema and prompt context
+    CLI->>CLI: Build field schema and prompt context
     CLI->>Ollama: Send system prompt, examples, PDF text, schema
     Ollama-->>CLI: Structured JSON response
     CLI->>Output: Write timestamped JSON result
@@ -78,3 +130,18 @@ sequenceDiagram
 ```
 
 The current pipeline extracts text directly with PdfPig. OCR is not part of the extraction flow.
+
+Extraction results are written as a JSON object containing:
+
+```json
+{
+  "Date": "2026-09-20T16:36:46.546+02:00",
+  "Data": [
+    {
+      "FieldName": "invoiceNumber",
+      "Text": "2025-002"
+    }
+  ],
+  "RawOcr": "Raw text extracted from the PDF"
+}
+```

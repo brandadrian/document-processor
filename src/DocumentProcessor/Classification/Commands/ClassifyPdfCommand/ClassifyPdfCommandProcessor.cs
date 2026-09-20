@@ -1,7 +1,9 @@
 ﻿using System.Diagnostics;
+using System.Text.Json;
+using DocumentProcessor.Classification.Commands.ClassifyPdfCommand.Models;
 using DocumentProcessor.Classification.Options;
 using DocumentProcessor.Classification.Services;
-using DocumentProcessor.Shared;
+using DocumentProcessor.Shared.Models;
 using DocumentProcessor.Shared.Services;
 using Microsoft.Extensions.Logging;
 
@@ -11,9 +13,12 @@ public class ClassifyPdfCommandProcessor(
     ILogger<ClassifyPdfCommandProcessor> logger,
     ClassificationService classificationService,
     ClassificationSettings settings,
-    TextReaderService textReaderService)
+    TextReaderService textReaderService,
+    OutputPathResolver outputPathResolver)
 {
-    public async Task<bool> Execute(string pdfPath, CancellationToken cancellationToken)
+    private static readonly JsonSerializerOptions OutputOptions = new() { WriteIndented = true };
+
+    public async Task<bool> Execute(string pdfPath, string? outputPath, CancellationToken cancellationToken)
     {
         bool success = false;
 
@@ -26,11 +31,28 @@ public class ClassifyPdfCommandProcessor(
             
             var result = await classificationService.ClassifyDocument(text, settings.Model, settings.LlmUrl, cancellationToken);
             stopwatch.Stop();
+            var classificationResult = new ProcessingResult<DocumentClassification>(DateTimeOffset.Now, result, text);
+            var resolvedOutputPath = outputPathResolver.Resolve(
+                pdfPath,
+                outputPath,
+                "files",
+                "classification",
+                "results",
+                result.DocumentType.ToLowerInvariant());
+            if (Path.GetFullPath(pdfPath) == Path.GetFullPath(resolvedOutputPath))
+            {
+                throw new ArgumentException("The output path must not overwrite the input PDF.");
+            }
+
+            Directory.CreateDirectory(Path.GetDirectoryName(resolvedOutputPath)!);
+            var json = JsonSerializer.Serialize(classificationResult, OutputOptions);
+            await File.WriteAllTextAsync(resolvedOutputPath, json + Environment.NewLine, cancellationToken);
 
             logger.LogInformation(
-                "Classification done. PdfPath: {PdfPath}. Type: {DocumentType}. Processing time: {ProcessingTimeMs} ms",
+                "Classification done. PdfPath: {PdfPath}. Type: {DocumentType}. Result: {OutputPath}. Processing time: {ProcessingTimeMs} ms",
                 pdfPath,
                 result.DocumentType,
+                resolvedOutputPath,
                 stopwatch.ElapsedMilliseconds);
             
             success = true;
@@ -42,4 +64,5 @@ public class ClassifyPdfCommandProcessor(
 
         return success;
     }
+
 }

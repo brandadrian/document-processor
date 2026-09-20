@@ -41,6 +41,11 @@ ScaffoldingReadMe.txt
 *~
 CodeCoverage/
 
+# Generated document processing results
+files/classification/results/
+files/extraction/results/
+files/**/lehrvertragv2*
+
 # MSBuild Binary and Structured Log
 *.binlog
 

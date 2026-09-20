@@ -1,14 +1,14 @@
 [
   {
-    "CategoryName": "invoiceNumber",
+    "FieldName": "invoiceNumber",
     "Text": "F1000876/23"
   },
   {
-    "CategoryName": "invoiceDate",
+    "FieldName": "invoiceDate",
     "Text": "2023-08-14"
   },
   {
-    "CategoryName": "totalAmount",
+    "FieldName": "totalAmount",
     "Text": "702,00"
   }
 ]
