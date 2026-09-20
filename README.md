@@ -12,11 +12,15 @@ DocumentProcessor is a command line utility built with .NET for document process
   - [Ollama Test](#ollama-test)
   - [PDF Classification](#pdf-classification)
   - [PDF Data Extraction](#pdf-data-extraction)
+  - [PDF Image Data Extraction](#pdf-image-data-extraction)
+- [Text vs Image Extraction](#text-vs-image-extraction)
 - [Extraction Flow](#extraction-flow)
+- [Image Extraction Flow](#image-extraction-flow)
 
 ## Features
 - Analyze a pdf wether it is an invoice, correspondence or other document type.
 - Extract document data as a JSON array of `FieldName`/`Text` pairs, matching the selected extraction type.
+- Extract document data from rendered PDF images with a vision model.
 
 ## System Context
 
@@ -36,6 +40,7 @@ flowchart LR
 ## Prerequisites
 - [Docker Desktop](https://www.docker.com/products/docker-desktop) up and running
 - **Ollama** running locally with a compatible model (e.g., `qwen2.5:3b`, `qwen3:4b`, or `gemma4:31b`)
+- **Image extraction only:** a vision-capable Ollama model, e.g. `llava:7b-v1.6`
 
 ### Ollama Setup
 ```sh
@@ -47,6 +52,9 @@ ollama serve
 
 # 3. Pull a model (in another terminal)
 ollama pull gemma4:31b
+
+# 4. Optional: pull a vision model for image extraction
+ollama pull llava:7b-v1.6
 ```
 
 ### Alternative: Ollama Setup via Docker
@@ -120,13 +128,36 @@ By default, extraction results are written to:
 files/extraction/results/<type>/<pdf-filename>_<timestamp>.json
 ```
 
+### PDF Image Data Extraction
+
+Extract data from a PDF image:
+
+```sh
+dotnet run --project src/DocumentProcessor -- extract-pdf-image-data \
+	files/image-extraction/tests/invoice_example/invoice_3.pdf \
+	--type invoice_example
+```
+
+By default, image extraction results are written to:
+
+```text
+files/image-extraction/results/<type>/<pdf-filename>_<timestamp>.json
+```
+
+## Text vs Image Extraction
+
+| Command | Input sent to model | Use when                                                   |
+|---|---|------------------------------------------------------------|
+| `extract-pdf-data` | PDF text extracted with PdfPig | The PDF has selectable text                                |
+| `extract-pdf-image-data` | Rendered PDF image only | You want a vision model (e.g. `llava:7b-v1.6`) to read the document image |
+
 ## Extraction Flow
 
 ```mermaid
 sequenceDiagram
     actor User
     participant CLI as extract-pdf-data
-    participant Text as PdfPig OCR
+    participant Text as PdfPig text reader
     participant Training as Training resources
     participant Prompt as Type prompt
     participant Ollama
@@ -163,4 +194,24 @@ Extraction results are written as a JSON object containing:
   ],
   "RawOcr": "Raw text extracted from the PDF"
 }
+```
+
+## Image Extraction Flow
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant CLI as extract-pdf-image-data
+    participant Renderer as PDF renderer
+    participant Prompt as Image prompt
+    participant Ollama as Vision model
+    participant Output as Results folder
+
+    User->>CLI: Run command with PDF path and --type invoice_example
+    CLI->>Renderer: Render PDF to PNG image
+    Renderer-->>CLI: Base64 image
+    CLI->>Prompt: Load image extraction prompt
+    CLI->>Ollama: Send prompt, schema and image
+    Ollama-->>CLI: Structured JSON response
+    CLI->>Output: Write timestamped JSON result
 ```

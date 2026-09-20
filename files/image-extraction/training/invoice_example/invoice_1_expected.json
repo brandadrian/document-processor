@@ -1,0 +1,14 @@
+[
+  {
+    "FieldName": "invoiceNumber",
+    "Text": "F1000876/23"
+  },
+  {
+    "FieldName": "invoiceDate",
+    "Text": "2023-08-14"
+  },
+  {
+    "FieldName": "totalAmount",
+    "Text": "702,00"
+  }
+]

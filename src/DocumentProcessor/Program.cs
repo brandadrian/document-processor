@@ -3,6 +3,8 @@ using DocumentProcessor.Classification;
 using DocumentProcessor.Classification.Options;
 using DocumentProcessor.Extraction;
 using DocumentProcessor.Extraction.Options;
+using DocumentProcessor.ImageExtraction;
+using DocumentProcessor.ImageExtraction.Options;
 using DocumentProcessor.Shared;
 using DocumentProcessor.Shared.Services;
 using Microsoft.Extensions.Configuration;
@@ -30,6 +32,13 @@ var services = new ServiceCollection()
         Model = configuration["Extraction:Model"] ??
                 throw new InvalidDataException("Missing configuration value: Extraction:Model")
     })
+    .AddSingleton(new ImageExtractionSettings
+    {
+        LlmUrl = configuration["ImageExtraction:LlmUrl"] ??
+                 throw new InvalidDataException("Missing configuration value: ImageExtraction:LlmUrl"),
+        Model = configuration["ImageExtraction:Model"] ??
+                throw new InvalidDataException("Missing configuration value: ImageExtraction:Model")
+    })
     .AddLogging(builder =>
     {
         builder.AddConsole(options =>
@@ -45,6 +54,7 @@ var services = new ServiceCollection()
     })
     .AddClassification()
     .AddExtraction()
+    .AddImageExtraction()
     .AddShared()
     .AddTransient<TextReaderService>()
     .AddTransient<OutputPathResolver>()

@@ -14,6 +14,10 @@ public sealed class OllamaGenerateRequest
     [JsonPropertyName("prompt")]
     public required string Prompt { get; init; }
 
+    [JsonPropertyName("images")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string[]? Images { get; init; }
+
     [JsonPropertyName("stream")]
     public bool Stream { get; init; }
 

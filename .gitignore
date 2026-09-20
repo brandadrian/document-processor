@@ -44,6 +44,7 @@ CodeCoverage/
 # Generated document processing results
 files/classification/results/
 files/extraction/results/
+files/image-extraction/results/
 files/**/tests/invoice/**
 files/**/tests/lehrvertrag/**
 files/**/training/invoice/**
