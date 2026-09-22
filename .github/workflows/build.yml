@@ -28,3 +28,6 @@ jobs:
 
       - name: Build
         run: dotnet build DocumentProcessor.sln --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test DocumentProcessor.sln --configuration Release --no-build
