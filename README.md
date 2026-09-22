@@ -3,16 +3,18 @@
 DocumentProcessor is a command line utility built with .NET for document processing.
 
 ## Table of Contents
-- [System Context](#system-context)
-- [Features](#features)
-- [Prerequisites](#prerequisites)
-  - [Ollama Setup](#ollama-setup)
-  - [Alternative: Ollama Setup via Docker](#alternative-ollama-setup-via-docker)
-- [Usage](#usage)
-  - [Ollama Test](#ollama-test)
-  - [PDF Classification](#pdf-classification)
-  - [PDF Data Extraction](#pdf-data-extraction)
-- [Extraction Flow](#extraction-flow)
+- [DocumentProcessor](#documentprocessor)
+  - [Table of Contents](#table-of-contents)
+  - [Features](#features)
+  - [System Context](#system-context)
+  - [Prerequisites](#prerequisites)
+    - [Ollama Setup](#ollama-setup)
+    - [Alternative: Ollama Setup via Docker](#alternative-ollama-setup-via-docker)
+  - [Usage](#usage)
+    - [Ollama Test](#ollama-test)
+    - [PDF Classification](#pdf-classification)
+    - [PDF Data Extraction](#pdf-data-extraction)
+  - [Extraction Flow](#extraction-flow)
 
 ## Features
 - Analyze a pdf wether it is an invoice, correspondence or other document type.
@@ -164,3 +166,4 @@ Extraction results are written as a JSON object containing:
   "RawOcr": "Raw text extracted from the PDF"
 }
 ```
+
