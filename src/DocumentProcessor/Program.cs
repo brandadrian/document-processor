@@ -15,7 +15,7 @@ var configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
     .Build();
 
-var services = new ServiceCollection()
+var services = new ServiceCollection1()
     .AddSingleton(new ClassificationSettings
     {
         LlmUrl = configuration["Classification:LlmUrl"] ??
