@@ -11,6 +11,6 @@ public class FieldValueTests
         var fieldValue = new FieldValue("InvoiceNumber", "INV-001");
 
         Assert.Equal("InvoiceNumber", fieldValue.FieldName);
-        Assert.Equal("INV-001_FAIL", fieldValue.Text);
+        Assert.Equal("INV-001", fieldValue.Text);
     }
 }
