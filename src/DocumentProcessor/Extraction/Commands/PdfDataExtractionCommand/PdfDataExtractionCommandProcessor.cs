@@ -34,7 +34,17 @@ public class PdfDataExtractionCommandProcessor(
 
             var stopwatch = Stopwatch.StartNew();
             var examples = useTrainingFiles ? LoadExamples(type, cancellationToken) : [];
-            var categories = ResolveCategories(type, examples);
+            var categories = examples.Count > 0
+                ? examples.SelectMany(example => example.Fields)
+                    .Select(field => field.FieldName)
+                    .Distinct(StringComparer.Ordinal)
+                    .ToArray()
+                : LoadCategoriesFromEmbeddedExpectedFiles(type);
+            if (categories.Length == 0)
+            {
+                throw new InvalidDataException(
+                    $"No categories available for type '{type}'. Add embedded *_expected.json files for this type.");
+            }
             var text = textReaderService.ReadText(pdfPath, logger, cancellationToken);
             var fields = await extractionService.ExtractData(text, examples, categories, type, settings.Model, settings.LlmUrl, cancellationToken);
             stopwatch.Stop();
@@ -77,27 +87,6 @@ public class PdfDataExtractionCommandProcessor(
         }
 
         return false;
-    }
-
-    private static string[] ResolveCategories(string type, IReadOnlyCollection<ExtractionExample> examples)
-    {
-        if (examples.Count > 0)
-        {
-            return examples
-                .SelectMany(example => example.Fields)
-                .Select(field => field.FieldName)
-                .Distinct(StringComparer.Ordinal)
-                .ToArray();
-        }
-
-        var categoriesFromEmbeddedSchema = LoadCategoriesFromEmbeddedExpectedFiles(type);
-        if (categoriesFromEmbeddedSchema.Length > 0)
-        {
-            return categoriesFromEmbeddedSchema;
-        }
-
-        throw new InvalidDataException(
-            $"No categories available for type '{type}'. Add embedded *_expected.json files for this type.");
     }
 
     private static string[] LoadCategoriesFromEmbeddedExpectedFiles(string type)
