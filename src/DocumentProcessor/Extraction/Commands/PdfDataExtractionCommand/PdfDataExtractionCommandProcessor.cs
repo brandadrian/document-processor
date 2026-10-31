@@ -18,7 +18,12 @@ public class PdfDataExtractionCommandProcessor(
 {
     private static readonly JsonSerializerOptions OutputOptions = new() { WriteIndented = true };
     
-    public async Task<bool> Execute(string pdfPath, string? outputPath, string type, CancellationToken cancellationToken)
+    public async Task<bool> Execute(
+        string pdfPath,
+        string? outputPath,
+        string type,
+        bool useTrainingFiles,
+        CancellationToken cancellationToken)
     {
         try
         {
@@ -28,9 +33,18 @@ public class PdfDataExtractionCommandProcessor(
             }
 
             var stopwatch = Stopwatch.StartNew();
-            var examples = LoadExamples(type, cancellationToken);
-            var categories = examples.SelectMany(example => example.Fields)
-                .Select(field => field.FieldName).Distinct(StringComparer.Ordinal).ToArray();
+            var examples = useTrainingFiles ? LoadExamples(type, cancellationToken) : [];
+            var categories = examples.Count > 0
+                ? examples.SelectMany(example => example.Fields)
+                    .Select(field => field.FieldName)
+                    .Distinct(StringComparer.Ordinal)
+                    .ToArray()
+                : LoadCategoriesFromEmbeddedExpectedFiles(type);
+            if (categories.Length == 0)
+            {
+                throw new InvalidDataException(
+                    $"No categories available for type '{type}'. Add embedded *_expected.json files for this type.");
+            }
             var text = textReaderService.ReadText(pdfPath, logger, cancellationToken);
             var fields = await extractionService.ExtractData(text, examples, categories, type, settings.Model, settings.LlmUrl, cancellationToken);
             stopwatch.Stop();
@@ -75,14 +89,43 @@ public class PdfDataExtractionCommandProcessor(
         return false;
     }
 
+    private static string[] LoadCategoriesFromEmbeddedExpectedFiles(string type)
+    {
+        var assembly = typeof(PdfDataExtractionCommandProcessor).Assembly;
+        var resourcePrefix = $"ExtractionSamples/{type}/";
+        var categorySet = new HashSet<string>(StringComparer.Ordinal);
+
+        foreach (var name in assembly.GetManifestResourceNames()
+                     .Where(name => NormalizeResourcePath(name).StartsWith(resourcePrefix, StringComparison.Ordinal) &&
+                                    NormalizeResourcePath(name).EndsWith("_expected.json", StringComparison.Ordinal))
+                     .OrderBy(name => name, StringComparer.Ordinal))
+        {
+            using var stream = assembly.GetManifestResourceStream(name)!;
+            var fields = JsonSerializer.Deserialize<ExtractedField[]>(stream);
+            if (fields is null || fields.Length == 0 ||
+                fields.Any(field => field is null || string.IsNullOrWhiteSpace(field.FieldName) || field.Text is null))
+            {
+                throw new InvalidDataException($"Invalid extraction example: {name}");
+            }
+
+            foreach (var fieldName in fields.Select(field => field.FieldName))
+            {
+                categorySet.Add(fieldName);
+            }
+        }
+
+        return categorySet.ToArray();
+    }
+
     private static List<ExtractionExample> LoadExamples(string type, CancellationToken cancellationToken)
     {
         var assembly = typeof(PdfDataExtractionCommandProcessor).Assembly;
         var examples = new List<ExtractionExample>();
+        var resourcePrefix = $"ExtractionSamples/{type}/";
 
         foreach (var name in assembly.GetManifestResourceNames()
-                     .Where(name => name.StartsWith($"ExtractionSamples/{type}/", StringComparison.Ordinal) &&
-                                    name.EndsWith("_expected.json", StringComparison.Ordinal))
+                     .Where(name => NormalizeResourcePath(name).StartsWith(resourcePrefix, StringComparison.Ordinal) &&
+                                    NormalizeResourcePath(name).EndsWith("_expected.json", StringComparison.Ordinal))
                      .OrderBy(name => name, StringComparer.Ordinal))
         {
             using var stream = assembly.GetManifestResourceStream(name)!;
@@ -107,5 +150,10 @@ public class PdfDataExtractionCommandProcessor(
         }
 
         return examples;
+    }
+
+    private static string NormalizeResourcePath(string resourceName)
+    {
+        return resourceName.Replace('\\', '/');
     }
 }

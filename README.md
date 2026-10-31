@@ -116,6 +116,18 @@ dotnet run --project src/DocumentProcessor -- extract-pdf-data \
 	--type invoice_example
 ```
 
+Use extraction without training files (simple example):
+
+```sh
+dotnet run --project src/DocumentProcessor -- extract-pdf-data \
+  files/extraction/tests/invoice_example/invoice_3.pdf \
+  --type invoice_example \
+  --use-training-files false
+```
+
+Notes:
+- `--use-training-files` defaults to `false`.
+
 By default, extraction results are written to:
 
 ```text

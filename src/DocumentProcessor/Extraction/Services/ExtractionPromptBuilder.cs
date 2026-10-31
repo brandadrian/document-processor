@@ -9,8 +9,19 @@ public static class ExtractionPromptBuilder
 
     public static string Build(string text, IEnumerable<ExtractionExample> examples)
     {
+        var extractionExamples = examples.ToArray();
+        // Support extraction runs without embedded training examples.
+        // In that mode we send only the raw PDF text as task input.
+        if (extractionExamples.Length == 0)
+        {
+            return $"""
+                Extract the data from this PDF text:
+                {text}
+                """;
+        }
+
         var exampleJson = JsonSerializer.Serialize(
-            examples.Select(example => new
+            extractionExamples.Select(example => new
             {
                 text = example.Text,
                 extraction = example.Fields.ToDictionary(field => field.FieldName, field => field.Text, StringComparer.Ordinal)
