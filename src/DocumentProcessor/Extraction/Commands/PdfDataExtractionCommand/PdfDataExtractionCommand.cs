@@ -18,10 +18,16 @@ public class PdfDataExtractionCommand : Command
             Description = "Output JSON file (defaults to files/extraction/results/<type>/<pdf-filename>_<timestamp>.json)"
         };
         var typeOption = ExtractionTypes.CreateOption();
+        var useTrainingFilesOption = new Option<bool>("--use-training-files")
+        {
+            Description = "Whether embedded training files should be used as extraction examples",
+            DefaultValueFactory = _ => false
+        };
 
         Add(pdfPathArgument);
         Add(outputOption);
         Add(typeOption);
+        Add(useTrainingFilesOption);
 
         SetAction(async (parseResult, cancellationToken) =>
         {
@@ -29,6 +35,7 @@ public class PdfDataExtractionCommand : Command
                 parseResult.GetValue(pdfPathArgument)!,
                 parseResult.GetValue(outputOption),
                 parseResult.GetValue(typeOption)!,
+                parseResult.GetValue(useTrainingFilesOption),
                 cancellationToken) ? 0 : 1;
         });
     }
